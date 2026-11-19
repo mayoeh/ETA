@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ETA · CS 4720 Final Project</title>
+<meta name="description" content="ETA tells you exactly when to leave for your next plan. CS 4720 Fall 2026 final project blog.">
+<style>
+  :root {
+    --ink: #262626;
+    --soft: #555555;
+    --paper: #F4F4F2;
+    --card: #FBFBF9;
+    --line: #262626;
+    --fill: #555555;
+    --tint: #E6E6E3;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font: 17px/1.6 Arial, Helvetica, sans-serif;
+  }
+  a { color: var(--ink); }
+  a:hover { color: #000; }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 0 20px; }
+
+  header.hero { background: var(--ink); color: var(--paper); padding: 56px 0 40px; }
+  .logo-box { width: 64px; height: 64px; border: 3px solid var(--paper); margin-bottom: 20px; }
+  .hero h1 { font-size: 64px; line-height: 1; margin: 0; letter-spacing: 1px; }
+  .hero .tag { font-size: 24px; margin: 12px 0 4px; color: #E2E2DF; }
+  .hero .meta { color: #BDBDBA; margin: 0; }
+  .hero a { color: var(--paper); }
+  .links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+  .btn { display: inline-block; border: 2px solid var(--paper); color: var(--paper); text-decoration: none; padding: 8px 14px; font-weight: 700; }
+  .btn:hover { background: var(--paper); color: var(--ink); }
+
+  nav.toc { border-bottom: 1px solid var(--line); background: var(--card); position: sticky; top: 0; z-index: 2; }
+  nav.toc .wrap { display: flex; flex-wrap: wrap; gap: 4px 18px; padding: 10px 20px; }
+  nav.toc a { text-decoration: none; font-weight: 700; font-size: 15px; }
+
+  section { padding: 40px 0 8px; }
+  h2 { font-size: 30px; margin: 0 0 6px; }
+  .eyebrow { font-size: 13px; font-weight: 700; letter-spacing: 3px; color: var(--soft); margin: 0 0 4px; text-transform: uppercase; }
+  h3 { font-size: 20px; margin: 22px 0 6px; }
+  p.lead { font-size: 20px; }
+
+  .box { border: 2px solid var(--line); background: var(--card); padding: 18px 20px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+  .grid .box h3 { margin-top: 0; }
+
+  table { width: 100%; border-collapse: collapse; background: var(--card); }
+  th, td { border: 1px solid var(--line); padding: 8px 10px; text-align: left; vertical-align: top; }
+  th { background: var(--tint); }
+  .status-done { font-weight: 700; }
+
+  .post { border: 2px solid var(--line); background: var(--card); margin: 18px 0; }
+  .post-head { background: var(--fill); color: #FBFBF9; padding: 10px 18px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 16px; }
+  .post-head strong { font-size: 19px; }
+  .post-body { padding: 4px 18px 14px; }
+  .post.upcoming { border-style: dashed; background: transparent; }
+  .post.upcoming .post-head { background: var(--tint); color: var(--ink); }
+
+  .shots { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 14px; }
+  figure { margin: 0; }
+  .shot { position: relative; aspect-ratio: 9 / 19.5; border: 2px solid var(--line); background: var(--card); overflow: hidden; }
+  .shot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  /* Wireframe-style placeholder shown until the screenshot file exists */
+  .shot.missing { background:
+      linear-gradient(to top right, transparent calc(50% - 1px), #9a9a9a, transparent calc(50% + 1px)),
+      linear-gradient(to top left, transparent calc(50% - 1px), #9a9a9a, transparent calc(50% + 1px)),
+      var(--card); }
+  .shot.missing::after { content: "Screenshot coming"; position: absolute; left: 8px; right: 8px; bottom: 8px; background: var(--card); border: 1px solid var(--line); padding: 4px 6px; font-size: 13px; text-align: center; }
+  figcaption { font-size: 14px; margin-top: 6px; font-weight: 700; }
+  figcaption span { display: block; font-weight: 400; color: var(--soft); }
+
+  .slides-embed { border: 2px solid var(--line); background: var(--card); padding: 14px 18px; display: flex; flex-wrap: wrap; gap: 10px 20px; align-items: center; justify-content: space-between; }
+  .slides-embed a.dark { background: var(--fill); color: #FBFBF9; border: 2px solid var(--line); padding: 7px 12px; text-decoration: none; font-weight: 700; }
+
+  footer { margin-top: 48px; padding: 24px 0 40px; border-top: 1px solid var(--line); color: var(--soft); font-size: 14px; }
+  @media (max-width: 560px) {
+    .hero h1 { font-size: 48px; }
+    .hero .tag { font-size: 20px; }
+    th, td { padding: 6px; font-size: 15px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="logo-box" aria-hidden="true"></div>
+    <h1>ETA</h1>
+    <p class="tag">Know exactly when to leave.</p>
+    <p class="meta">CS 4720 Mobile Application Development · Fall 2026 · Final project by Emma</p>
+    <div class="links">
+      <!-- Replace YOUR-USERNAME with your GitHub username -->
+      <a class="btn" href="https://github.com/mayoeh/ETA">Code on GitHub</a>
+      <a class="btn" href="#updates">Project updates</a>
+      <a class="btn" href="#screenshots">Screenshots</a>
+    </div>
+  </div>
+</header>
+
+<nav class="toc" aria-label="Sections">
+  <div class="wrap">
+    <a href="#idea">Idea</a>
+    <a href="#team">Team</a>
+    <a href="#features">Features</a>
+    <a href="#slides">Presentations</a>
+    <a href="#updates">Updates</a>
+    <a href="#screenshots">Screenshots</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <section id="idea">
+    <p class="eyebrow">The idea</p>
+    <h2>Stop guessing when to head out</h2>
+    <p class="lead">Add your schedule, and ETA tells you exactly when to leave, based on where you are, how you’re getting there, and how long the trip really takes. Share plans with friends so everyone knows what’s going on, or so you can head over together.</p>
+    <div class="grid">
+      <div class="box">
+        <h3>Plan anything</h3>
+        <p>Classes, work, errands and social plans, one-time or repeating, with start and end times and a leave-early buffer.</p>
+      </div>
+      <div class="box">
+        <h3>Leave on time</h3>
+        <p>Today counts down to when you should leave, using your GPS location and Google’s Routes API for walk, bike or bus.</p>
+      </div>
+      <div class="box">
+        <h3>Follow your route</h3>
+        <p>Turn-by-turn directions with live progress along the path, plus routes you’ve recorded or saved yourself.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="team">
+    <p class="eyebrow">Team</p>
+    <h2>Who did what</h2>
+    <table>
+      <tr><th style="width:28%">Person</th><th>Work</th></tr>
+      <tr>
+        <td><b>Emma</b> (solo)</td>
+        <td>Idea and pitch, wireframes, Firestore data model and security rules, all Android code (Kotlin + Jetpack Compose), Firebase and Google Maps Platform setup, testing, slides and this site.</td>
+      </tr>
+    </table>
+    <p>AI assistance (Claude) was used for brainstorming, wireframes and parts of the code; I reviewed, tested and changed everything I submit. Details are in the repo’s README.</p>
+  </section>
+
+  <section id="features">
+    <p class="eyebrow">Features</p>
+    <h2>What the app does</h2>
+    <h3>Required features</h3>
+    <table>
+      <tr><th style="width:48%">Requirement</th><th>How ETA meets it</th><th style="width:16%">Status</th></tr>
+      <tr><td>Login with Firebase Authentication</td><td>Email/password sign in and create account</td><td class="status-done">Done</td></tr>
+      <tr><td>3+ screens with real interactions</td><td>Today, Calendar, Edit plan, Route, Record a route, Routes, Settings</td><td class="status-done">Done</td></tr>
+      <tr><td>Data in Cloud Firestore with security rules</td><td>Plans, saved routes and profiles; owner-only rules, friends read shared plans</td><td class="status-done">Done</td></tr>
+      <tr><td>Interaction with other users’ data</td><td>Friends: search, requests, see shared plans</td><td>In progress</td></tr>
+      <tr><td>Survives rotation and interruptions</td><td>State kept in ViewModels and saved state</td><td>Testing</td></tr>
+    </table>
+
+    <h3>Optional XP features</h3>
+    <table>
+      <tr><th style="width:48%">Feature</th><th style="width:12%">XP</th><th>Status</th></tr>
+      <tr><td>Meaningful GPS (map, countdown, live route progress)</td><td>25</td><td class="status-done">Done</td></tr>
+      <tr><td>External API: Google Maps Platform Routes API</td><td>20</td><td class="status-done">Done</td></tr>
+      <tr><td>3+ settings in DataStore (travel mode, buffer, saved places)</td><td>15</td><td class="status-done">Done</td></tr>
+      <tr><td>Share into other apps (Share ETA)</td><td>15</td><td class="status-done">Done</td></tr>
+      <tr><td>Step-count walking pace</td><td>25</td><td>Planned</td></tr>
+      <tr><td>Google sign-in</td><td>10</td><td>Planned</td></tr>
+    </table>
+    <p>Built with Kotlin, Jetpack Compose, Firebase Auth, Cloud Firestore, DataStore, Maps SDK for Android (Maps Compose), the Routes API and Places API (New).</p>
+  </section>
+
+  <section id="slides">
+    <p class="eyebrow">Presentations</p>
+    <h2>Presentations</h2>
+    <!-- Pitch: export the deck as PDF into docs/. Show & Tell pages are Markdown files in docs/ (GitHub Pages turns them into .html). -->
+    <div class="slides-embed" style="margin-bottom:12px">
+      <div><b>Pitch</b> · Oct 27 · the idea, the screens, who does what</div>
+      <a class="dark" href="pitch-slides.pdf">Open slides (PDF)</a>
+    </div>
+    <div class="slides-embed">
+      <div><b>Show &amp; Tell 2</b> · Nov 19 · what changed, live demo, what’s left</div>
+      <a class="dark" href="show-and-tell-2.html">Read the write-up</a>
+    </div>
+  </section>
+
+  <section id="updates">
+    <p class="eyebrow">Running blog</p>
+    <h2>Project updates</h2>
+
+    <article class="post upcoming">
+      <div class="post-head"><strong>Demo Day</strong><span>Dec 3 or Dec 8</span></div>
+      <div class="post-body">
+        <p>Coming soon: final demo, screenshots of every screen and the finished feature list.</p>
+      </div>
+    </article>
+
+    <article class="post">
+      <div class="post-head"><strong>Show &amp; Tell 2: working app</strong><span>Nov 19, 2026</span></div>
+      <div class="post-body">
+        <h3>What changed since Show &amp; Tell 1</h3>
+        <ul>
+          <li>Renamed the app from Leave Now to <b>ETA</b>.</li>
+          <li>Switched from the Directions API to Google’s <b>Routes API</b>, since Directions is now legacy.</li>
+          <li>Dropped in-app chat; the app doesn’t need it.</li>
+          <li>Added a Record a route screen, saved places (Home, Work) and a bottom tab bar: Calendar, Routes, Today, Friends, Settings.</li>
+        </ul>
+        <h3>Working in the APK</h3>
+        <ul>
+          <li>Login with Firebase Auth.</li>
+          <li>Plans saved in Firestore with start and end times, repeat start and end dates, and a leaving-from place.</li>
+          <li>Today: a leave-by countdown from GPS and the Routes API.</li>
+          <li>“I’m leaving” lets you pick a route, then turn-by-turn directions follow you with live progress along the path.</li>
+          <li>Record your own routes with GPS, save them, and pick them for a plan.</li>
+          <li>Calendar week and month views; Settings in DataStore; Firestore security rules deployed.</li>
+        </ul>
+        <h3>Live demo</h3>
+        <p>Added a plan from the Calendar, showed it saved to Firestore, watched Today count down to leave time, started the route with a simulated walk (I can’t walk around the classroom, so the app moves my position along the real route), shared my ETA, and rotated the phone to show nothing is lost.</p>
+        <h3>What’s left and the biggest blocker</h3>
+        <p>Next up: Friends (search, requests, shared plans), step-count walking pace, Google sign-in, a leave-now notification, and rotation testing. The biggest blocker is Friends: it’s the required “other users’ data” feature, and the friend-request security rules have to be built and tested first.</p>
+        <p><a href="show-and-tell-2.html"><b>Full Show &amp; Tell 2 write-up →</b></a></p>
+      </div>
+    </article>
+
+    <article class="post">
+      <div class="post-head"><strong>Show &amp; Tell 1: design and data plan</strong><span>Week of Nov 9, 2026</span></div>
+      <div class="post-body">
+        <p>Presented low-fidelity wireframes of every screen, including login: Today, Edit plan, Follow a route, Record a route, Friends, Calendar and Settings.</p>
+        <p>Firestore plan: <code>users/{uid}</code> profiles, with <code>plans</code>, <code>friends</code> and <code>savedRoutes</code> under each user, plus a top-level <code>friendRequests</code> collection. Security rules: users write only their own data, friends can read only plans marked shared, and test mode is never used.</p>
+        <p>Proposed 110 XP (100 counts): GPS, step count, Routes API, DataStore settings, share and Google sign-in. Milestones: core loop working by Show &amp; Tell 2, Friends next, feature freeze Dec 1.</p>
+      </div>
+    </article>
+
+    <article class="post">
+      <div class="post-head"><strong>Pitch: “Leave Now”</strong><span>Oct 27, 2026</span></div>
+      <div class="post-body">
+        <p>Pitched an app that tells you when to leave for class, based on your location and real walking time, and lets friends heading the same way go together. After the pitch I widened it to work, errands and social plans too.</p>
+      </div>
+    </article>
+  </section>
+
+  <section id="screenshots">
+    <p class="eyebrow">Screenshots</p>
+    <h2>The app</h2>
+    <p>Grayscale on purpose: the focus this semester is function first.</p>
+    <!-- Save emulator screenshots into docs/screenshots/ with these names; placeholders disappear once the files exist -->
+    <div class="shots">
+      <figure><div class="shot"><img src="screenshots/login.png" alt="Login screen" onerror="this.parentNode.classList.add('missing'); this.remove();"></div><figcaption>Login<span>Email/password with Firebase Auth</span></figcaption></figure>
+      <figure><div class="shot"><img src="screenshots/today.png" alt="Today screen with leave-by countdown" onerror="this.parentNode.classList.add('missing'); this.remove();"></div><figcaption>Today<span>Countdown to when to leave</span></figcaption></figure>
+      <figure><div class="shot"><img src="screenshots/edit-plan.png" alt="Edit plan screen" onerror="this.parentNode.classList.add('missing'); this.remove();"></div><figcaption>Edit plan<span>Destination, leaving from, times, route</span></figcaption></figure>
+      <figure><div class="shot"><img src="screenshots/navigation.png" alt="Turn-by-turn navigation" onerror="this.parentNode.classList.add('missing'); this.remove();"></div><figcaption>Navigation<span>Turn-by-turn with live progress</span></figcaption></figure>
+      <figure><div class="shot"><img src="screenshots/record-route.png" alt="Record a route screen" onerror="this.parentNode.classList.add('missing'); this.remove();"></div><figcaption>Record a route<span>Walk it once, reuse it</span></figcaption></figure>
+      <figure><div class="shot"><img src="screenshots/calendar.png" alt="Calendar week view" onerror="this.parentNode.classList.add('missing'); this.remove();"></div><figcaption>Calendar<span>Week and month views</span></figcaption></figure>
+      <figure><div class="shot"><img src="screenshots/routes.png" alt="Saved routes" onerror="this.parentNode.classList.add('missing'); this.remove();"></div><figcaption>Routes<span>Saved and recorded routes</span></figcaption></figure>
+      <figure><div class="shot"><img src="screenshots/settings.png" alt="Settings screen" onerror="this.parentNode.classList.add('missing'); this.remove();"></div><figcaption>Settings<span>Defaults and saved places</span></figcaption></figure>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">ETA · CS 4720 Fall 2026 · Emma · Built with Kotlin, Jetpack Compose, Firebase and Google Maps Platform.</div>
+</footer>
+
+</body>
+</html>
