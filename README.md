@@ -1,6 +1,6 @@
 # ETA
 
-ETA tells you exactly when to leave for your next plan, based on where you are and how long the trip really takes. CS 4720 Fall 2026 final project (Kotlin, Jetpack Compose, Firebase).
+ETA tells you  when to leave for your next plan, based on where you are and how long the trip really takes.
 
 ## What works in this build (Show & Tell 2)
 
