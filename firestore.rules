@@ -1,0 +1,63 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{db}/documents {
+    function signedIn() { return request.auth != null; }
+    function isMe(uid) { return signedIn() && request.auth.uid == uid; }
+    function isFriendOf(uid) {
+      return exists(/databases/$(db)/documents/users/$(uid)/friends/$(request.auth.uid));
+    }
+    function accepted(a, b) {
+      return getAfter(/databases/$(db)/documents/friendRequests/$(a + '_' + b)).data.status == 'accepted';
+    }
+
+    // Public profile: any signed-in user can read (needed for friend search); only you can write yours.
+    match /users/{uid} {
+      allow read: if signedIn();
+      allow create, update: if isMe(uid)
+        && request.resource.data.displayName is string
+        && request.resource.data.displayName.size() >= 1
+        && request.resource.data.displayName.size() <= 50;
+
+      // Plans: you can do anything with yours; friends can read the ones you mark shared.
+      match /plans/{planId} {
+        allow read: if isMe(uid)
+          || (signedIn() && resource.data.shared == true && isFriendOf(uid))
+          || (signedIn() && request.auth.uid in resource.data.invitees);
+        allow create, update: if isMe(uid)
+          && request.resource.data.category in ['Class', 'Work', 'Errand', 'Social']
+          && request.resource.data.travelMode in ['walk', 'bike', 'bus']
+          && request.resource.data.invitees.size() <= 20;
+        allow delete: if isMe(uid);
+      }
+
+      match /friends/{fid} {
+        allow read: if isMe(uid);
+        allow create: if (isMe(uid) || isMe(fid)) && (accepted(uid, fid) || accepted(fid, uid));
+        allow delete: if isMe(uid) || isMe(fid);
+      }
+
+      match /savedRoutes/{routeId} {
+        allow read, write: if isMe(uid);
+      }
+    }
+
+    // "Upcoming with friends": collection-group query on plans you're invited to.
+    match /{path=**}/plans/{planId} {
+      allow read: if signedIn() && request.auth.uid in resource.data.invitees;
+    }
+
+    match /friendRequests/{reqId} {
+      allow read: if signedIn()
+        && request.auth.uid in [resource.data.fromUid, resource.data.toUid];
+      allow create: if isMe(request.resource.data.fromUid)
+        && reqId == request.resource.data.fromUid + '_' + request.resource.data.toUid
+        && request.resource.data.fromUid != request.resource.data.toUid
+        && request.resource.data.status == 'pending';
+      allow update: if isMe(resource.data.toUid)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status'])
+        && request.resource.data.status in ['accepted', 'declined'];
+      allow delete: if signedIn()
+        && request.auth.uid in [resource.data.fromUid, resource.data.toUid];
+    }
+  }
+}

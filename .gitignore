@@ -1,0 +1,43 @@
+# ---------- Android Studio / Gradle ----------
+*.iml
+.gradle/
+.kotlin/
+build/
+/captures
+.externalNativeBuild
+.cxx
+.navigation/
+
+# IDE settings (machine-specific)
+/.idea/
+!/.idea/codeStyles/
+!/.idea/runConfigurations.xml
+
+# OS clutter
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---------- Secrets: never commit ----------
+# Holds MAPS_API_KEY and your SDK path
+local.properties
+# Firebase config for this app (contains an API key)
+app/google-services.json
+# Signing keys
+*.jks
+*.keystore
+*.p12
+keystore.properties
+
+# ---------- Build outputs ----------
+*.apk
+*.aab
+*.ap_
+*.dex
+/app/release/
+/app/debug/
+
+# Logs and temp files
+*.log
+*.hprof
+_src_snapshot.tar
