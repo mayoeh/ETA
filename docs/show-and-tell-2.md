@@ -16,9 +16,7 @@ ETA tells you exactly when to leave for your next plan, based on where you are, 
 
 | Change | Why |
 | --- | --- |
-| Renamed **Leave Now → ETA** | Shorter, and it fits plans beyond class |
 | **Directions API → Routes API** | Google now lists Directions as legacy; Routes API also gives turn-by-turn steps |
-| Dropped in-app chat | The app doesn’t need it; friends share plans instead |
 | Added **Record a route** | Save the way you actually walk and reuse it |
 | Added **saved places** (Home, Work) | Pick a starting place quickly when making a plan |
 | Added a **bottom tab bar** | Calendar · Routes · Today · Friends · Settings |
